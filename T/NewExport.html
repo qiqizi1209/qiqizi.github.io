@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高分子材料虚拟仿真实验报告</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SimSun', 'Times New Roman', sans-serif;
+        }
+        body {
+            background-color: #f3f4f6;
+            padding: 16px;
+            mso-line-height-rule: exactly; /* Word兼容性 */
+        }
+        .no-print {
+            margin: 20px auto;
+            text-align: center;
+            padding: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+        .btn-export {
+            background-color: #10b981;
+            color: white;
+        }
+        .btn-export:hover {
+            background-color: #059669;
+        }
+        .btn-print {
+            background-color: #7c3aed;
+            color: white;
+        }
+        .btn-print:hover {
+            background-color: #6d28d9;
+        }
+        .btn-reset {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-reset:hover {
+            background-color: #4b5563;
+        }
+        .page-style {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            padding: 40px;
+            position: relative;
+        }
+        .input-line {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            outline: none;
+            text-align: right;
+            padding: 2px 4px;
+            width: 250px;
+            font-size: 16px;
+        }
+        .input-line:focus {
+            border-color: #1e40af;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .font-bold {
+			/* text-align: center; */
+			line-height: 50px;
+            font-weight: bold;
+			font-size: 25px;
+			letter-spacing: 1em;
+        }
+        /* 图片样式 */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .logo-img {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .major-logo {
+            max-width: 300px;
+            max-height: 200px;
+            object-fit: contain;
+            margin: 20px 0;
+        }
+        .image-error {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        /* 段落与标题样式 */
+        p {
+            margin: 12pt 0;
+            line-height: 1.5;
+            mso-line-height-rule: exactly;
+            text-align: justify;
+        }
+        h1, h2, h3, h4 {
+            mso-line-height-rule: exactly;
+            page-break-after: avoid;
+        }
+        h1 {
+            font-size: 24pt;
+            font-weight: bold;
+            margin: 24pt 0;
+            text-align: center;
+        }
+        h2 {
+            font-size: 20pt;
+            font-weight: bold;
+            margin: 18pt 0;
+            text-align: center;
+            border-bottom: 1pt solid #000;
+            padding-bottom: 6pt;
+        }
+        h3 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 16pt 0 8pt 0;
+            border-bottom: 1pt solid #ccc;
+            padding-bottom: 4pt;
+            mso-heading-level: 1; /* 支持Word目录生成 */
+        }
+        h4 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 14pt 0 6pt 0;
+            mso-heading-level: 2;
+        }
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            page-break-inside: avoid;
+        }
+        table th, table td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f3f4f6;
+        }
+        .score-table {
+            display: flex;
+            align-items: center;
+            margin: 16px 0;
+            justify-content: space-between; /* 总分靠右显示 */
+        }
+        .table-title {
+            margin-right: 10px;
+        }
+        .table-score {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        /* 列表样式 */
+        ul {
+            list-style-type: decimal;
+            margin-left: 24px;
+            margin-top: 8px;
+        }
+        ul li {
+            margin-bottom: 8px;
+        }
+        /* 分页控制 */
+        .page-break {
+            page-break-before: always;
+            mso-page-break-before: always;
+            height: 0;
+            clear: both;
+        }
+        .section {
+            margin-top: 24pt;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .page-style {
+                box-shadow: none;
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            .image-error {
+                display: none;
+            }
+        }
+    </style>
+    <!-- 字体图标 -->
+    <style>
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 0;
+            stroke: currentColor;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+    </style>
+    
+    <!-- 将关键函数提前定义 -->
+   <!-- <script>
+        // 处理库加载错误
+        function handleLibraryError() {
+            const exportButton = document.getElementById('exportWord');
+            exportButton.disabled = true;
+            exportButton.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93V19h-2v1.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> 导出功能不可用';
+            console.error('HTML-DOCX-JS库加载失败，请检查网络连接或CDN链接');
+        } -->
+        
+        <!-- // 检查库是否加载成功 -->
+        <!-- function checkLibraryLoaded() {
+            return typeof htmlDocx !== 'undefined';
+        }
+    </script> -->
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+    <!-- 添加备用CDN链接 -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/html-docx-js@1.0.4/dist/html-docx.js"></script> -->
+<!--    <script src="https://unpkg.com/html-docx-js@1.0.4/dist/html-docx.js" onerror="handleLibraryError()"></script> -->
+</head>
+<body>
+    <!-- 操作按钮区 -->
+    <div class="no-print">
+        <button id="exportWord" class="btn btn-export" >
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8z"/><path d="M14 2v6h6v12H6V2z"/><path d="M13 9V3.5L18.5 9z"/>
+            </svg>
+            导出为Word
+        </button>
+        <button id="printBtn" class="btn btn-print">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M19 8h-4V6c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v2H5c-1.1 0-2 .9-2 2v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7c0-1.1-.9-2-2-2zM7 6h6v2H7V6zm14 15H5v-7h14v7zm-4-4H9v-2h8v2zm0-4H9V9h8v2z"/>
+            </svg>
+            打印文档
+        </button>
+        <button id="resetBtn" class="btn btn-reset">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+            </svg>
+            重置内容
+        </button>
+    </div>
+
+    <!-- 文档主体 -->
+    <div class="page-style" id="reportContent">
+        <!-- 封面 -->
+        <div class="text-center" id="coverSection">
+            <div class="logo-container mt-8">
+                <img src="img/重理logo.png" class="logo-img" alt="重庆理工大学校徽" data-img-id="logo" style="width: 250px;">
+                <div class="image-error" id="logoError"></div>
+                <h1>高分子材料与工程</h1>
+                <h1>高分子材料虚拟仿真实验课程报告</h1>
+            </div>
+
+            <div class="mt-12 mb-16">
+                <img src="img/专业logo.png" class="major-logo" alt="专业标识" data-img-id="majorLogo" style="width:150px ;">
+                <div class="image-error" id="majorLogoError"></div>
+                <h3><span>题目     </span>  &nbsp PET切片生产工艺及性能表征虚拟仿真实验报告</h3>
+            </div>
+
+            <div class="space-y-6" style="max-width: 600px; margin: 0 auto; text-align: left;">
+                <div class="flex justify-between">
+                    <span class="text-lg font-bold">学 院：</span>
+                    <span class="input-line">材料科学与工程学院</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-lg font-bold">班 级：</span>
+                    <input type="text" placeholder="请输入班级" class="input-line" id="className">
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-lg font-bold">学生姓名：</span>
+                    <input type="text" placeholder="请输入姓名" class="input-line" id="studentName">
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-lg font-bold">学 号：</span>
+                    <input type="text" placeholder="请输入学号" class="input-line" id="studentId">
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-lg font-bold">指导教师：</span>
+                    <input type="text" placeholder="请输入指导教师姓名" class="input-line" id="teacherName">
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-lg font-bold">日 期：</span>
+                    <input type="date" class="input-line" id="experimentDate">
+                </div>
+            </div>
+        </div>
+
+        <!-- 分页符 -->
+        <div class="page-break"></div>
+
+        <!-- 说明部分 -->
+        <div class="section" id="section1">
+            <h3>说 明</h3>
+            
+            <h4>实习目标和要求</h4>
+            <p>1、课程目标及其与毕业要求的关系如下表：</p>
+            
+            <!-- 移除课程目标表的总分输入 -->
+            <div class="overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr style="background-color: #f3f4f6;">
+                            <th>课程目标</th>
+                            <th>描述</th>
+                            <th>关联程度</th>
+                            <th>毕业要求</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>课程目标1</td>
+                            <td>通过虚拟仿真实验，能够设计满足高分子材料的聚合工艺和高分子材料的结构与性能表征工艺</td>
+                            <td style="text-align: center;">H</td>
+                            <td>3.2</td>
+                            <td>设计能够满足高分子材料制备与改性、成型加工及应用领域复杂工程问题的特定需求的系统（装置）、单元（部件）或工艺流程，并在设计中体现创新意识。</td>
+                        </tr>
+                        <tr style="background-color: #f3f4f6;">
+                            <td>课程目标2</td>
+                            <td>通过虚拟仿真实验，能考虑节能减排、健康安全等约束条件对高分子材料聚合新工艺、新产品的影响</td>
+                            <td style="text-align: center;">H</td>
+                            <td>3.3</td>
+                            <td>设计/开发新材料、新工艺、新装置过程中，考虑社会、健康、安全、法律、文化以及环境等约束条件。</td>
+                        </tr>
+                        <tr>
+                            <td>课程目标3</td>
+                            <td>通过虚拟仿真实验，能够了解高分子材料结构表征仪器、性能表征仪器和模拟软件使用原理和方法。</td>
+                            <td style="text-align: center;">H</td>
+                            <td>5.1</td>
+                            <td>了解高分子材料制备与改性、成型加工及应用常用现代检测仪器、信息技术工具、现代工具和模拟软件的使用原理和方法，并理解其局限性。</td>
+                        </tr>
+                        <tr style="background-color: #f3f4f6;">
+                            <td>课程目标4</td>
+                            <td>通过虚拟仿真实验，能够选用和开发高分子材料聚合新工艺、结构与性能表征新工具、加工成型新设备。</td>
+                            <td style="text-align: center;">H</td>
+                            <td>5.3</td>
+                            <td>针对现有工具的局限性，面向高分子材料制备与改性、成型加工及应用的具体复杂工程问题，开发、选用满足特定需求的现代工具。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4>2、基本要求：</h4>
+            <!-- 移除基本要求表的总分输入 -->
+            <ul>
+                <li>高分子材料虚拟仿真实验涉及到的内容丰富，实践性强，建议学生在理解的基础上学习，课堂认真听老师讲授内容。</li>
+                <li>观看相关国家级或省级精品虚拟仿真实验课程。</li>
+                <li>及时关注和查阅与高分子材料虚拟仿真实验相关的最新文献资料，了解研究进展和前沿技术，扩大知识面。</li>
+                <li>掌握聚对苯二甲酸乙二醇酯的合成原理、制备工艺，并了解聚对苯二甲酸乙二醇酯的循环使用过程。掌握核磁共振波谱仪、红外光谱仪、凝胶渗透色谱仪的原理，掌握光学性能和热性能分析原理，了解聚对苯二甲酸乙二醇酯结构对性能的影响。掌握聚对苯二甲酸乙二醇酯的挤出工艺和注塑工艺，了解塑料加工成型原理。</li>
+                <li>加强与同学、老师之间的讨论和交流。</li>
+            </ul>
+        </div>
+
+        <!-- 新增的实验内容部分 -->
+        <div class="section" id="section2">
+            <h2>实验内容</h2>
+            
+            <h4>PET实验内容</h4>
+            <div class="score-table">
+                <div class="table-title font-bold">PET实验内容评分表</div>
+				<div class="table-score">总分：<span id="finalTable3Score">0</span></div>
+            </div>
+            <table>
+                <tr>
+                    <th>实验内容</th>
+                    <th>得分</th>
+                </tr>
+                <tr>
+                    <td>阶段一</td>
+                    <td><input type="number" id="stage1Score" value="0" min="0" max="100" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>阶段二</td>
+                    <td><input type="number" id="stage2Score" value="0" min="0" max="100" step="0.1" style="width: 60px;"></td>
+                </tr>
+            </table>
+
+            <h4>测试题</h4>
+            <div class="score-table">
+                <div class="table-title font-bold">测试题评分表</div>
+                <div class="table-score">总分：<span id="quizTotalScore">0</span></div>
+            </div>
+            <table>
+                <tr>
+                    <th>题目</th>
+                    <th>正确答案</th>
+                    <th>答案解析</th>
+                    <th>得分</th>
+                </tr>
+                <tr>
+                    <td>1、对苯二甲酸（PTA）和乙二醇（EG）分子式分别为?</td>
+                    <td>B.TPA：HOOC–C₆H₄–COOH  EG：HO–CH₂–CH₂–OH </td>
+                    <td>对苯二甲酸（TPA）的分子结构式是 HOOC–C₆H₄–COOH，表示苯环上对位取代两个羧基（–COOH），是二元酸；乙二醇（EG）的分子结构式是 HO–CH₂–CH₂–OH，是二元醇；</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>2、在直接酯化缩聚法生产PET时，乙二醇（EG）投料过多会造成什么影响？</td>
+                    <td>B.会使聚合反应平衡向单体方向移动，降低聚合度 </td>
+                    <td>在PTA法生产PET的过程中，EG投料过多会打破酯化和缩聚反应的平衡，使反应向单体方向偏移，导致聚合度降低，最终产品分子量下降，影响PET的性能。因此，控制PTA与EG的投料比对于确保产品质量至关重要。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>3、第一酯化反应器中温度过高或过低会导致什么后果？</td>
+                    <td>A.会使乙二醇（EG）在高温下大量挥发、在低温下酯化不完全，从而破坏PTA/EG投料比平衡，降低后续聚合度</td>
+                    <td>温度过高：EG挥发损失，体系中EG减少，PTA/EG摩尔比失调；温度过低：酯化反应速率不足，EG未能充分与TPA反应，同样打破投料比平衡。这两种情况都会降低后续缩聚反应的聚合度，使最终PET分子量下降，影响力学和加工性能。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>4、第一与第二酯化反应器中原料的什么特性将存在显著区别？</td>
+                    <td>A.第二酯化反应器的物料比第一反应器具有更高的聚合度和更高的黏度。</td>
+                    <td>第一酯化反应器的进料主要是低聚度的PTA与EG，以及生成的短链寡聚物，黏度较低；经过第一酯化后送入第二酯化反应器的物料已完成初步酯化，聚合度和黏度显著升高，有助于缩聚反应的进一步进行。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>5、为什么进入缩聚阶段反应温度较酯化阶段将明显提高？</td>
+                    <td>B.在缩聚阶段提高温度可增强乙二醇等副产物的挥发，推动聚合平衡向高聚物方向移动，并克服体系黏度增加带来的传质阻力。 </td>
+                    <td>副产物去除：缩聚阶段要脱除大量乙二醇和少量水，高温有利于其蒸发，推动平衡向高聚物生成方向移动；传质阻力：随着链长增长，体系黏度显著上升，高温可以降低黏度、改善扩散，提高聚合效率。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>6、为什么预缩聚阶段要分成第一预缩聚和第二预缩聚两道工序？</td>
+                    <td>C.可分步升温降压，逐步脱除乙二醇和水，避免体系黏度骤增导致传质阻力过大，从而平稳过渡到最终缩聚阶段。</td>
+                    <td>分步脱副产物：第一预缩聚主要在较高压力（或轻微减压）和中温下脱除大部分低沸点的乙二醇和水；第二预缩聚在更低压力和稍高温度下进一步去除残余副产物。粘度控制：分两段进行可避免一次性反应造成体系粘度急剧上升，改善物料的流动性和传质效率。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>7、为什么终缩聚阶段较第一、二预缩聚阶段真空度更高（内压力更小）？</td>
+                    <td>A.终缩聚阶段需在更强真空下脱除残余乙二醇和反应副产物，以推动聚合平衡向高聚物方向偏移并获得较高分子量。</td>
+                    <td>在终缩聚阶段，分子链已经足够长，体系黏度极高，需要最大程度地去除残留的乙二醇、水和其他低沸点副产物。更高真空能降低体系中副产物的汽化温度，增强脱除效率，有效推动反应平衡向分子量增长方向移动，最终获得所需的高分子量PET。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>8、结晶器中温度控制对物料属性会有什么影响？</td>
+                    <td>B.会影响PET颗粒的结晶度和晶体结构，使晶核数量和晶体形态发生变化。</td>
+                    <td>结晶器温度决定了PET熔体冷却结晶的速率和程度：较高温度下晶体生长缓慢、晶粒较大；较低温度下晶核增多、晶粒更细小，因此结晶度和晶体形态会发生显著变化。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>9、为什么在结晶器中PET颜色由透明变为乳白色？</td>
+                    <td>A.因为在结晶器较高温度下，PET分子链由冻结状态开始运动，到达结晶温度开始缓慢结晶形成大量微米级晶核和晶区，这些晶体界面会散射可见光，使材料呈现乳白色。</td>
+                    <td>基础切片是水直接骤冷，切片来不及结晶，是透明色。结晶器内通过控制温度使PET由转变为部分结晶态，产生大量微米尺度的晶核和晶区。这些晶区与非晶区的折射率不同，界面大量散射入射光线，从而使颗粒由透明变为乳白色。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>10、柱式反应器的作用是什么？</td>
+                    <td>B.利用催化剂填充床吸附杂质，改善物料的色泽和热稳定性。</td>
+                    <td>切片物料通过氮气输送系统送入柱式反应器 ，切片在反应釜内依靠温度和停留时间进一步发生缩聚反应，其聚合度增加到产品要求指标范围。反应产生的副产物通过氮气的反向流动随着切片的移动被带走。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>11、在核磁共振氢谱（¹H NMR）测试中，磁场频率的选择会对测试结果造成哪些影响？</td>
+                    <td>A.磁场频率越高，谱图分辨率越高，化学位移差异更容易被分辨。</td>
+                    <td>核磁共振氢谱的磁场频率（如常用有300 MHz、400 MHz、600 MHz 等）对应不同磁场强度。高磁场强度可：1. 提高分辨率，更容易区分邻近的化学环境。2. 提高灵敏度：更高的磁场能提升信噪比，使弱信号更易被探测，尤其对低丰度样品非常有利。 3. 加快采集速度：（在相同信噪比要求下）高场仪器灵敏度更高，采集所需扫描次数可减少，测试时间更短</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>12、在核磁共振氢谱（¹H NMR）测试结果中，横坐标的含义是什么？</td>
+                    <td>B.表示氢原子的化学位移，反映其所处的电子环境。</td>
+                    <td>¹H NMR 的横坐标单位为 ppm（parts per million），表示化学位移 δ。化学位移反映氢核处在不同电子环境下的屏蔽效应，是样品分子结构的直接反映。例如：甲基（–CH₃）氢：δ ~ 0.9 ppm；苯环上的氢：δ ~ 7.0–8.0 ppm。化学位移是无量纲相对位移值，相对于参考物（通常是四甲基硅烷，TMS）为 0 ppm。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>13、在傅里叶变换红外光谱（FTIR）测试中，为什么需要进行背景扫描？</td>
+                    <td>B.为了消除环境中水蒸气、CO₂ 等干扰，提高样品光谱的准确性。</td>
+                    <td>加热速率影响样品的热传递和反应速率。快速加热时，样品内部温度升高迅速，反应在较高温度下快速进行；慢速加热时，样品有更多时间进行热传递和反应，反应在较低温度下缓慢进行。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>14、在傅里叶变换红外光谱（FTIR）曲线中，特征峰对应的横坐标、峰高分别代表什么信息？</td>
+                    <td>B.横坐标代表样品浓度，峰高代表测量时间。</td>
+                    <td>横坐标（波数，单位 cm⁻¹）表示光的频率（或能量），不同官能团对红外光的吸收在不同波数处表现为特征峰，因此峰的横坐标可以用来识别样品中存在的化学键或官能团。例如：O–H伸缩振动峰在 ~3200–3600 cm⁻¹，C=O伸缩振动峰出现在 ~1700 cm⁻¹。峰高反映该波数处的吸收或透过强度，一般与官能团的相对含量或浓度有关。峰越高，说明该基团在样品中含量可能越多（在实验条件控制一致的前提下）。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>15、斜坡，即升温速率设置过高，会导致测试结果中熔融温度如何变化？</td>
+                    <td>A.熔融温度测得值向高温方向偏移，并且峰变宽。</td>
+                    <td>当升温速率过高时，样品内部温度滞后于炉膛温度，实际达到熔融所需能量时，记录温度已偏高，导致熔融峰向高温方向移动；同时，升温速率加快还会使热梯度增大，造成峰形展宽。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>16、请问如图所示PET的DSC曲线中，峰A、B、C分别代表PET的什么峰？</td>
+                    <td>C.结晶峰、熔融峰、冷结晶峰。</td>
+                    <td>结晶峰（A峰）：降温过程PET 分子链规整排列结晶，出现放热峰，体现降温时的结晶能力和结晶动力学特点。熔融峰（B峰）： ​PET 晶体吸收热量发生熔融，是吸热峰，反映不同完善程度晶体的熔融行为。冷结晶峰（C峰）：若 PET 试样为非晶或部分非晶，在该温度下原本无序的分子链会发生结晶，是放热峰，体现分子链在升温过程中重新排列形成晶体的行为 。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>17、在TGA测试中，如果加热速率设置过快或过慢，会对测试结果产生什么影响？</td>
+                    <td>A.加热速率过快可能导致热分解峰位提前，过慢则导致峰位延迟。</td>
+                    <td>加热速率过快：样品内温度分布不均，可能导致分解反应滞后于记录温度，表现为分解温度偏高，并可能出现峰位重叠，降低分辨率。加热速率过慢：热传导更均匀，但分解过程更接近热力学平衡，峰值温度可能出现延迟，同时测试时间较长。常规设置区间为5 °C/min 到 20 °C/min </td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>18、在TGA测试中，如果热失重曲线出现斜率突变，通常表明下列哪种情况发生？</td>
+                    <td>C.样品发生了剧烈的热分解或挥发性组分快速释放。</td>
+                    <td>热失重曲线的斜率表示单位时间内样品质量的变化速率（dW/dT）。如果出现斜率突变（陡降），说明在该温度区间内样品发生了剧烈的质量损失，通常是由于：有机物的热分解反应突然发生、样品中存在低温易挥发组分、材料发生结构坍塌或碳链断裂等</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>19、在PET拉伸测试中，拉伸速率过高或是过低分别会对测试结果产生什么影响？</td>
+                    <td>A.拉伸速率主要影响弹性模量，速率越高，测得的弹性模量越低；速率越低，测得的弹性模量越高。</td>
+                    <td>速率过高：分子链来不及发生松弛和重新取向，应力集中，表现为高强度、低延伸；速率过低：分子链有足够时间松弛和取向，容易出现较大形变，强度相对降低而延伸率增加。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+                <tr>
+                    <td>20、上图为同一样品在不同拉伸速率下的测试结果，请问那条曲线对应的拉伸速率最小？</td>
+                    <td>C.ε3</td>
+                    <td>拉伸速率越高，分子链来不及调整与滑移，材料更易表现出脆性断裂，应力上升迅速，但断裂应变小。拉伸速率降低时，分子链有更多时间发生定向与滑移，材料趋向延展性断裂，出现明显的屈服、颈缩及冷拉现象。曲线C出现明显的冷拉阶段，对应最低速率。</td>
+                    <td><input type="number" class="quiz-score" value="0" min="0" max="10" step="0.1" style="width: 60px;"></td>
+                </tr>
+            </table>
+            
+            <!-- 最终评分汇总表：仅包含实验内容相关得分 -->
+            <h4>最终评分汇总表</h4>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>PET实验内容得分</td>
+                        <td><span id="final3Score">0</span></td>
+                        <td rowspan="2" class="font-bold">总评成绩：<span id="finalTotalScore">0</span></td>
+                    </tr>
+                    <tr>
+                        <td>测试题得分</td>
+                        <td><span id="finalQuizScore">0</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页符 -->
+        <div class="page-break"></div>
+
+        <!-- 正文部分 -->
+        <div class="section" id="section3">
+            <h3>引言</h3>
+            <div>
+                <textarea class="w-full min-h-150 p-4 border" id="introduction" placeholder="请输入引言内容..."></textarea>
+            </div>
+
+            <h3>实验</h3>
+            <div>
+                <textarea class="w-full min-h-200 p-4 border" id="experimentContent" placeholder="请输入实验内容..."></textarea>
+            </div>
+
+            <h3>结果与讨论</h3>
+            <div>
+                <textarea class="w-full min-h-200 p-4 border" id="resultsDiscussion" placeholder="请输入结果与讨论内容..."></textarea>
+            </div>
+
+            <h3>结论</h3>
+            <div>
+                <textarea class="w-full min-h-150 p-4 border" id="conclusion" placeholder="请输入结论内容..."></textarea>
+            </div>
+
+            <h3>参考文献</h3>
+            <div>
+                <textarea class="w-full min-h-150 p-4 border" id="references" placeholder="请输入参考文献..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 存储图片Base64编码
+        const imageBase64 = {
+            logo: '',
+            majorLogo: ''
+        };
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 处理学校logo
+            const logoImg = document.querySelector('[data-img-id="logo"]');
+            const logoError = document.getElementById('logoError');
+            convertImageToBase64(logoImg, 'logo', logoError);
+
+            // 处理专业logo
+            const majorLogo = document.querySelector('[data-img-id="majorLogo"]');
+            const majorLogoError = document.getElementById('majorLogoError');
+            convertImageToBase64(majorLogo, 'majorLogo', majorLogoError);
+            
+            // 初始化评分计算
+            initScoreCalculation();
+			initExportWord();
+            
+            // 检查库是否加载成功
+            // if (!checkLibraryLoaded()) {
+            //     handleLibraryError();
+            // } else {
+            //     // 初始化导出Word功能
+            //     initExportWord();
+            // }
+            
+            // 初始化打印功能
+            initPrintFunction();
+            
+            // 初始化重置功能
+            initResetFunction();
+        });
+
+        // 将图片转换为Base64
+        function convertImageToBase64(imgElement, imgId, errorElement) {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = imgElement.src;
+
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                imageBase64[imgId] = canvas.toDataURL('image/png', 0.8);
+                errorElement.textContent = '';
+            };
+
+            img.onerror = function() {
+                // errorElement.textContent = `提示：未找到"${imgElement.src}"，请将图片文件放在与网页相同的目录下`;
+                imageBase64[imgId] = getDefaultSvg(imgId);
+            };
+        }
+
+        // 生成默认SVG备用图
+        function getDefaultSvg(imgId) {
+            if (imgId === 'logo') {
+                return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjkwIiBmaWxsPSIjMWU0MGFmIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI3NSIgZmlsbD0iI2UwZjJmZSIvPjxwYXRoIGQ9Ik0xMDAgMTAgTDEwOCAzMCAxMzUgMzUgTDExNSA1NSBMMTIwIDg1IEwxMDAgNzAgTDgwIDg1IEw4NSA1NSBmNS01IDM1LTEwIDM1LTEwTDEwMCAxMFoiIGZpbGw9IiMxZTQwYWYiLz48cGF0aCBkPSJNMjYgMTEwIEwxMTAgNDAgTDEyNSA2MCBMMTIwIDg1IEwxMDAgNzUgTDkwIDg1IEw4NSA2MCBaIiBmaWxsPSIjMWU0MGFmIi8+PHJlY3QgeD0iOTAiIHk9IjkwIiB3aWR0aD0iMjAiIGhlaWdodD0iNDAiIHJ4PSI1IiBmaWxsPSIjMWU0MGFmIi8+PHJlY3QgeD0iNzUiIHk9IjExMCIgd2lkdGg9IjUwIiBoZWlnaHQ9IjIwIiByeD0iNSIgZmlsbD0iIzFlNDBhZiIvPjwvc3ZnPg==';
+            } else {
+                return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMjAwIj48cGF0aCBkPSJNMzAgMzAgTDMwMCAzMCIgc3Ryb2tlPSIjMWU0MGFmIiBzdHJva2Utd2lkdGg9IjEwIi8+PHBhdGggZD0iTTMwIDEwMCBMMzAwIDEwMCIgc3Ryb2tlPSIjMWU0MGFmIiBzdHJva2Utd2lkdGg9IjEwIi8+PHBhdGggZD0iTTMwIDE3MCBMMzAwIDE3MCIgc3Ryb2tlPSIjMWU0MGFmIiBzdHJva2Utd2lkdGg9IjEwIi8+PHRleHQgeD0iMTUwIiB5PSI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxNiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LWZhbWlseTpBcmlhbCxzYW5zLXNlcmlmIj7lh7vmmI7lm57mlrDlhazlm708L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtZmFtaWx5PUFyaWFsIiBmb250LWZhbWlseTpBcmlhbCxzYW5zLXNlcmlmIj7lh7vmmI7lm57mlrDlhazlm708L3RleHQ+PC9zdmc+';
+            }
+        }
+
+        // 初始化评分计算
+        function initScoreCalculation() {
+            // PET实验内容得分计算
+            const stageInputs = ['stage1Score', 'stage2Score'];
+            stageInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    const score1 = parseFloat(document.getElementById('stage1Score').value) || 0;
+                    const score2 = parseFloat(document.getElementById('stage2Score').value) || 0;
+                    document.getElementById('finalTable3Score').textContent = (score1 + score2).toFixed(1);
+                    updateFinalTotal();
+                });
+            });
+
+            // 测试题得分计算
+            const quizInputs = document.querySelectorAll('.quiz-score');
+            quizInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    calculateQuizTotal();
+                    updateFinalTotal();
+                });
+            });
+
+            // 初始化计算
+            calculateQuizTotal();
+            updateFinalTotal();
+        }
+
+        // 计算测试题总分
+        function calculateQuizTotal() {
+            const quizInputs = document.querySelectorAll('.quiz-score');
+            let total = 0;
+            quizInputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            document.getElementById('quizTotalScore').textContent = total.toFixed(1);
+            document.getElementById('finalQuizScore').textContent = total.toFixed(1);
+        }
+
+        // 更新最终总评成绩
+        function updateFinalTotal() {
+            const petScore = parseFloat(document.getElementById('finalTable3Score').textContent) || 0;
+            const quizScore = parseFloat(document.getElementById('finalQuizScore').textContent) || 0;
+            const total = petScore + quizScore;
+            document.getElementById('final3Score').textContent = petScore.toFixed(1);
+            document.getElementById('finalTotalScore').textContent = total.toFixed(1);
+        }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		function initExportWord(){
+		
+		document.getElementById('exportWord').addEventListener('click', function() {
+		    
+			
+			// 尝试通过ue4接口发送消息
+			    if (typeof ue !== 'undefined' && ue.interface) {
+			        // 收集所有需要的数据
+			        const reportData = {
+			            className: document.getElementById('className').value,
+			            studentName: document.getElementById('studentName').value,
+			            // 收集其他所有需要的数据...
+			            finalTotalScore: document.getElementById('finalTotalScore').textContent
+			        };
+			        
+			        // 发送数据到虚幻引擎
+			        ue.interface.broadcast("ExportReport", JSON.stringify(reportData));
+			    } else {
+			        // 备用方案：通过URL命令
+			        window.location.href = "unreal://export/report";
+			    }
+			
+			
+			try {
+		        // 收集表单数据
+		        const formData = {
+		            className: document.getElementById('className').value || '未填写',
+		            studentName: document.getElementById('studentName').value || '未填写',
+		            studentId: document.getElementById('studentId').value || '未填写',
+		            teacherName: document.getElementById('teacherName').value || '未填写',
+		            experimentDate: document.getElementById('experimentDate').value || '未填写',
+		            introduction: document.getElementById('introduction').value || '无内容',
+		            experimentContent: document.getElementById('experimentContent').value || '无内容',
+		            resultsDiscussion: document.getElementById('resultsDiscussion').value || '无内容',
+		            conclusion: document.getElementById('conclusion').value || '无内容',
+		            references: document.getElementById('references').value || '无内容',
+		            stage1Score: document.getElementById('stage1Score').value || '0',
+		            stage2Score: document.getElementById('stage2Score').value || '0',
+		            finalTable3Score: document.getElementById('finalTable3Score').textContent || '0',
+		            finalQuizScore: document.getElementById('finalQuizScore').textContent || '0',
+		            finalTotalScore: document.getElementById('finalTotalScore').textContent || '0'
+		        };
+		
+		        // 构建完整的HTML内容
+		        const htmlContent = `
+		        <!DOCTYPE html>
+		        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+		              xmlns:w="urn:schemas-microsoft-com:office:word"
+		              xmlns="http://www.w3.org/TR/REC-html40">
+		        <head>
+		            <meta charset="UTF-8">
+		            <title>高分子材料虚拟仿真实验报告</title>
+		            <style>
+		                /* 从原样式中提取关键CSS */
+		                body {
+		                    font-family: 'SimSun', 'Times New Roman', serif;
+		                    font-size: 12pt;
+		                    line-height: 1.5;
+		                    margin: 0;
+		                    padding: 0;
+		                }
+		                h1, h2, h3, h4 {
+		                    page-break-after: avoid;
+		                }
+		                h1 {
+		                    font-size: 24pt;
+		                    font-weight: bold;
+		                    margin: 24pt 0;
+		                    text-align: center;
+		                }
+		                h2 {
+		                    font-size: 20pt;
+		                    font-weight: bold;
+		                    margin: 18pt 0;
+		                    text-align: center;
+		                    border-bottom: 1pt solid #000;
+		                    padding-bottom: 6pt;
+		                }
+		                h3 {
+		                    font-size: 16pt;
+		                    font-weight: bold;
+		                    margin: 16pt 0 8pt 0;
+		                    border-bottom: 1pt solid #ccc;
+		                    padding-bottom: 4pt;
+		                }
+		                h4 {
+		                    font-size: 14pt;
+		                    font-weight: bold;
+		                    margin: 14pt 0 6pt 0;
+		                }
+		                p {
+		                    margin: 12pt 0;
+		                    text-align: justify;
+		                }
+		                table {
+		                    width: 100%;
+		                    border-collapse: collapse;
+		                    margin: 16pt 0;
+		                    page-break-inside: avoid;
+		                }
+		                table th, table td {
+		                    border: 1pt solid #000;
+		                    padding: 6pt 9pt;
+		                    text-align: left;
+		                }
+		                table th {
+		                    background-color: #f3f4f6;
+		                    font-weight: bold;
+		                }
+		                ul {
+		                    list-style-type: decimal;
+		                    margin: 12pt 0 12pt 28pt;
+		                }
+		                ul li {
+		                    margin-bottom: 6pt;
+		                }
+		                .page-break {
+		                    page-break-before: always;
+		                    height: 0;
+		                }
+		                .logo-img {
+		                    width: 150pt;
+		                    height: auto;
+		                }
+		                .major-logo {
+		                    width: 200pt;
+		                    height: auto;
+		                }
+		                .cover-info {
+		                    width: 60%;
+		                    margin: 72pt auto 0 auto;
+		                    text-align: left;
+		                }
+		                .score-table {
+		                    display: flex;
+		                    justify-content: space-between;
+		                    margin: 16pt 0;
+		                }
+						.logo1{
+							width:100px;
+							height:30px;
+						}
+						.logo2{
+							width:150px;
+							height:200px;
+						}
+		            </style>
+		        </head>
+		        <body>
+		            <!-- 封面 -->
+		            <div>
+		                <div style="text-align: center; margin: 20pt 0;">
+		                    <img src="${imageBase64.logo}" class="logo-img" alt="重庆理工大学校徽" calss="logo1">
+		                </div>
+		                <h1>高分子材料与工程</h1>
+		                <h1>高分子材料虚拟仿真实验课程报告</h1>
+		                
+		                <div style="text-align: center; margin: 20pt 0;">
+		                    <img src="${imageBase64.majorLogo}" class="major-logo" alt="专业标识" class="logo2">
+		                </div>
+		                
+		                <h2>PET切片生产工艺及性能表征虚拟仿真实验报告</h2>
+		                
+		                <div class="cover-info">
+		                    <p><b>学 院：</b>材料科学与工程学院</p>
+		                    <p><b>班 级：</b>${formData.className}</p>
+		                    <p><b>学生姓名：</b>${formData.studentName}</p>
+		                    <p><b>学 号：</b>${formData.studentId}</p>
+		                    <p><b>指导教师：</b>${formData.teacherName}</p>
+		                    <p><b>日 期：</b>${formData.experimentDate}</p>
+		                </div>
+		            </div>
+		
+		            <div class="page-break"></div>
+		
+		            <!-- 说明部分 -->
+		            <div>
+		                <h3>说 明</h3>
+		                
+		                <h4>实习目标和要求</h4>
+		                <p>1、课程目标及其与毕业要求的关系如下表：</p>
+		                
+		                <table>
+		                    <tr style="background-color: #f3f4f6;">
+		                        <th>课程目标</th>
+		                        <th>描述</th>
+		                        <th>关联程度</th>
+		                        <th>毕业要求</th>
+		                        <th>描述</th>
+		                    </tr>
+		                    <tr>
+		                        <td>课程目标1</td>
+		                        <td>通过虚拟仿真实验，能够设计满足高分子材料的聚合工艺和高分子材料的结构与性能表征工艺</td>
+		                        <td style="text-align: center;">H</td>
+		                        <td>3.2</td>
+		                        <td>设计能够满足高分子材料制备与改性、成型加工及应用领域复杂工程问题的特定需求的系统（装置）、单元（部件）或工艺流程，并在设计中体现创新意识。</td>
+		                    </tr>
+		                    <tr style="background-color: #f3f4f6;">
+		                        <td>课程目标2</td>
+		                        <td>通过虚拟仿真实验，能考虑节能减排、健康安全等约束条件对高分子材料聚合新工艺、新产品的影响</td>
+		                        <td style="text-align: center;">H</td>
+		                        <td>3.3</td>
+		                        <td>设计/开发新材料、新工艺、新装置过程中，考虑社会、健康、安全、法律、文化以及环境等约束条件。</td>
+		                    </tr>
+		                    <tr>
+		                        <td>课程目标3</td>
+		                        <td>通过虚拟仿真实验，能够了解高分子材料结构表征仪器、性能表征仪器和模拟软件使用原理和方法。</td>
+		                        <td style="text-align: center;">H</td>
+		                        <td>5.1</td>
+		                        <td>了解高分子材料制备与改性、成型加工及应用常用现代检测仪器、信息技术工具、现代工具和模拟软件的使用原理和方法，并理解其局限性。</td>
+		                    </tr>
+		                    <tr style="background-color: #f3f4f6;">
+		                        <td>课程目标4</td>
+		                        <td>通过虚拟仿真实验，能够选用和开发高分子材料聚合新工艺、结构与性能表征新工具、加工成型新设备。</td>
+		                        <td style="text-align: center;">H</td>
+		                        <td>5.3</td>
+		                        <td>针对现有工具的局限性，面向高分子材料制备与改性、成型加工及应用的具体复杂工程问题，开发、选用满足特定需求的现代工具。</td>
+		                    </tr>
+		                </table>
+		
+		                <h4>2、基本要求：</h4>
+		                <ul>
+		                    <li>高分子材料虚拟仿真实验涉及到的内容丰富，实践性强，建议学生在理解的基础上学习，课堂认真听老师讲授内容。</li>
+		                    <li>观看相关国家级或省级精品虚拟仿真实验课程。</li>
+		                    <li>及时关注和查阅与高分子材料虚拟仿真实验相关的最新文献资料，了解研究进展和前沿技术，扩大知识面。</li>
+		                    <li>掌握聚对苯二甲酸乙二醇酯的合成原理、制备工艺，并了解聚对苯二甲酸乙二醇酯的循环使用过程。掌握核磁共振波谱仪、红外光谱仪、凝胶渗透色谱仪的原理，掌握光学性能和热性能分析原理，了解聚对苯二甲酸乙二醇酯结构对性能的影响。掌握聚对苯二甲酸乙二醇酯的挤出工艺和注塑工艺，了解塑料加工成型原理。</li>
+		                    <li>加强与同学、老师之间的讨论和交流。</li>
+		                </ul>
+		            </div>
+		
+		            <div class="page-break"></div>
+		
+		            <!-- 实验内容部分 -->
+		            <div>
+		                <h3>实验内容</h3>
+		                
+		                <h4>PET实验内容</h4>
+		                <div class="score-table">
+		                    <div style="font-weight: bold;">PET实验内容评分表</div>
+		                    <div>总分：${formData.finalTable3Score}</div>
+		                </div>
+		                <table>
+		                    <tr>
+		                        <th>实验内容</th>
+		                        <th>得分</th>
+		                    </tr>
+		                    <tr>
+		                        <td>阶段一</td>
+		                        <td>${formData.stage1Score}</td>
+		                    </tr>
+		                    <tr>
+		                        <td>阶段二</td>
+		                        <td>${formData.stage2Score}</td>
+		                    </tr>
+		                </table>
+		
+		                <h4>测试题</h4>
+		                <div class="score-table">
+		                    <div style="font-weight: bold;">测试题评分表</div>
+		                    <div>总分：${formData.finalQuizScore}</div>
+		                </div>
+		                <table>
+		                    <tr>
+		                        <th>题目</th>
+		                        <th>正确答案</th>
+		                        <th>答案解析</th>
+		                        <th>得分</th>
+		                    </tr>
+		                    ${Array.from(document.querySelectorAll('.quiz-score')).map((input, index) => {
+		                        const row = input.closest('tr');
+		                        return `
+		                        <tr>
+		                            <td>${row.cells[0].textContent}</td>
+		                            <td>${row.cells[1].textContent}</td>
+		                            <td>${row.cells[2].textContent}</td>
+		                            <td>${input.value}</td>
+		                        </tr>`;
+		                    }).join('')}
+		                </table>
+		                
+		                <h4>最终评分汇总表</h4>
+		                <table>
+		                    <tr>
+		                        <td>PET实验内容得分</td>
+		                        <td>${formData.finalTable3Score}</td>
+		                        <td rowspan="2" style="font-weight: bold;">总评成绩：${formData.finalTotalScore}</td>
+		                    </tr>
+		                    <tr>
+		                        <td>测试题得分</td>
+		                        <td>${formData.finalQuizScore}</td>
+		                    </tr>
+		                </table>
+		            </div>
+		
+		            <div class="page-break"></div>
+		
+		            <!-- 正文部分 -->
+		            <div>
+		                <h3>引言</h3>
+		                <p>${formData.introduction.replace(/\n/g, '<br>')}</p>
+		
+		                <h3>实验</h3>
+		                <p>${formData.experimentContent.replace(/\n/g, '<br>')}</p>
+		
+		                <h3>结果与讨论</h3>
+		                <p>${formData.resultsDiscussion.replace(/\n/g, '<br>')}</p>
+		
+		                <h3>结论</h3>
+		                <p>${formData.conclusion.replace(/\n/g, '<br>')}</p>
+		
+		                <h3>参考文献</h3>
+		                <p>${formData.references.replace(/\n/g, '<br>')}</p>
+		            </div>
+		        </body>
+		        </html>
+		        `;
+		
+		        // 转换为Word文档
+		        const converted = htmlDocx.asBlob(htmlContent, {
+		            orientation: 'portrait',
+		            margins: { top: 1440, right: 1440, bottom: 1440, left: 1440 } // 2.54厘米边距 (1440 twips = 1英寸)
+		        });
+		
+		        // 创建下载链接
+		        const url = URL.createObjectURL(converted);
+		        const a = document.createElement('a');
+		        a.href = url;
+		        a.download = `PET切片实验报告_${formData.studentName}.docx`;
+		        document.body.appendChild(a);
+		        a.click();
+		        
+		        // 清理
+		        setTimeout(() => {
+		            document.body.removeChild(a);
+		            URL.revokeObjectURL(url);
+		        }, 100);
+		
+		    } catch (error) {
+		        console.error('导出失败:', error);
+		        alert('导出失败: ' + error.message);
+		    }
+		});
+		
+		
+		// 检查UE接口是否可用
+		        if (typeof ue !== 'undefined' && ue.interface) {
+		            try {
+		                // 发送数据到虚幻引擎
+		                ue.interface.ExportReport(JSON.stringify(reportData));
+						alert("导出请求发送")
+		                console.log('导出请求已发送');
+		            } catch (e) {
+		                console.error('导出失败:', e);
+		                alert('导出失败: ' + e.message);
+		            }
+		        } else {
+		            console.error('UE接口不可用');
+		            alert('无法连接到虚幻引擎，导出功能不可用');
+		        }
+		
+		
+		// 页面加载完成后初始化
+		document.addEventListener('DOMContentLoaded', function() {
+		    // ...其他初始化代码...
+		    initExportWord(); // 初始化导出功能
+		    
+		    // 测试UE接口
+		    if (typeof ue !== 'undefined' && ue.interface) {
+		        console.log('UE接口已检测到');
+				alert("检测到接口")
+		        ue.interface.LogMessage('页面加载完成');
+		    } else {
+		        console.warn('UE接口未检测到');
+		    }
+		});
+		
+		
+		
+		}
+		
+		            
+		            
+
+        
+        
+        // 初始化打印功能
+        function initPrintFunction() {
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+        }
+        
+        // 初始化重置功能
+        function initResetFunction() {
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                if (confirm('确定要重置所有内容吗？这将清除所有已填写的信息。')) {
+                    // 重置表单输入
+                    document.getElementById('className').value = '';
+                    document.getElementById('studentName').value = '';
+                    document.getElementById('studentId').value = '';
+                    document.getElementById('teacherName').value = '';
+                    document.getElementById('experimentDate').value = '';
+                    
+                    // 重置文本区域
+                    document.getElementById('introduction').value = '';
+                    document.getElementById('experimentContent').value = '';
+                    document.getElementById('resultsDiscussion').value = '';
+                    document.getElementById('conclusion').value = '';
+                    document.getElementById('references').value = '';
+                    
+                    // 重置分数
+                    document.getElementById('stage1Score').value = '0';
+                    document.getElementById('stage2Score').value = '0';
+                    
+                    const quizInputs = document.querySelectorAll('.quiz-score');
+                    quizInputs.forEach(input => {
+                        input.value = '0';
+                    });
+                    
+                    // 更新分数计算
+                    calculateQuizTotal();
+                    updateFinalTotal();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
